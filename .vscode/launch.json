@@ -11,7 +11,7 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/mesa_test/server.py",
-            "python": "${workspaceFolder}/env/Scripts/python.exe"
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe"
         }
     ]
 }
