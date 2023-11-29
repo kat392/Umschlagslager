@@ -36,12 +36,12 @@ class TGabelstapler(Agent):
         # looking for agents in the cells around the agent
         for cell in available_cells:
             other_agents = self.model.grid.get_cell_list_contents([cell])
-            if len(other_agents):
+            if len(other_agents) > 0:
                 for agent in other_agents:
                     cells_with_agents.append(agent)
 
         # if there is some agent on the neighborhood
-        if len(cells_with_agents) > 0:
+        if len(cells_with_agents) == 0:
             new_position = available_cells[0]
             # new_position = self.random.choice(available_cells)
         else:
