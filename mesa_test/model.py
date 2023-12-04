@@ -3,9 +3,12 @@ from mesa.time import RandomActivation
 from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
 from agent import TWare, TLagerplatz, TGabelstapler
+from agent_routing_controller import Tagent_routing_controller
 
 class OurModel(Model):
     def __init__(self, number_agents_gabelstapler, number_agents_lagerplatz, number_agents_ware, width, height):
+        self.agent_routing_controller = Tagent_routing_controller()
+
         self.num_agents_gabelstapler = number_agents_gabelstapler
         self.num_agents_lagerplatz = number_agents_lagerplatz
         self.num_agents_ware = number_agents_ware
@@ -60,4 +63,5 @@ class OurModel(Model):
 
     def step(self):
         """Advance the model by one step."""
+        self.agent_routing_controller.step(self.schedule.agents)
         self.schedule.step()

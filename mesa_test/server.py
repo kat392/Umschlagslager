@@ -11,13 +11,13 @@ SIZE_OF_CANVAS_IN_PIXELS_Y = 1000
 
 simulation_params = {
     "number_agents_gabelstapler": NumberInput(
-        "Anzahl der Gabelstapler", value=5
+        "Anzahl der Gabelstapler", value=1
     ),
     "number_agents_lagerplatz": NumberInput(
-    "Anzahl der Lagerplätze", value=5
+    "Anzahl der Lagerplätze", value=0
     ),
     "number_agents_ware": NumberInput(
-    "Anzahl der Waren", value=5
+    "Anzahl der Waren", value=3
     ),
     "width": NUMBER_OF_CELLS,
     "height": NUMBER_OF_CELLS,
@@ -98,5 +98,6 @@ grid = CanvasGrid(
 server = ModularServer(
     OurModel, [grid], "Lager Model", simulation_params
 )
+
 server.port = 8521  # The default
 server.launch()

@@ -1,4 +1,6 @@
+from tkinter import Y
 from mesa import Agent
+from zmq import NULL
 
 class TWare(Agent):
     def __init__(self, unique_id, model):
@@ -19,9 +21,10 @@ class TLagerplatz(Agent):
         return
 
 class TGabelstapler(Agent):
-    aTransportierteWare: TWare
+    ware: TWare
 
     def __init__(self, unique_id, model):
+        self.ware = NULL
         super().__init__(unique_id, model)
 
     def step(self) -> None:
@@ -42,7 +45,23 @@ class TGabelstapler(Agent):
 
         # if there is some agent on the neighborhood
         if len(cells_with_agents) == 0:
-            new_position = available_cells[0]
+            if self.ware != NULL:
+                ware_x, ware_y = self.ware.pos
+                self_x, self_y = self.pos
+
+                if ware_x > self_x:
+                    self_x = self_x + 1
+                elif ware_x < self_x:
+                    self_x = self_x - 1
+
+                if ware_y > self_y:
+                    self_y = self_y + 1
+                elif ware_y < self_y:
+                    self_y = self_y - 1
+
+                new_position = self_x, self_y
+            else:
+                new_position = available_cells[0]
             # new_position = self.random.choice(available_cells)
         else:
             new_position = self.pos
