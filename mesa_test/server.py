@@ -3,6 +3,7 @@ from mesa.visualization.UserParam import NumberInput
 from mesa.visualization.modules import CanvasGrid
 from model import OurModel
 from agent import TWare, TLagerplatz, TGabelstapler
+from zmq import NULL
 
 NUMBER_OF_CELLS = 15
 
@@ -28,16 +29,28 @@ def agent_portrayal(agent):
     # if the agent is buried we put it as white, not showing it.
     #if agent.buried:
     if isinstance(agent, TGabelstapler):
-        portrayal = {
-            "Shape": "rect",
-            "Filled": "true",
-            "Color": "yellow",
-            "w": "1",
-            "h": "1",
-            "text": "Gabelstapler",
-            "Layer": 1,
-            "text_color": "black",
-        }
+        if agent.next_way_point == NULL:
+           portrayal = {
+               "Shape": "rect",
+               "Filled": "true",
+               "Color": "red",
+               "w": "1",
+               "h": "1",
+               "text": "Gabelstapler",
+               "Layer": 1,
+               "text_color": "black",
+           }
+        else:
+            portrayal = {
+                "Shape": "rect",
+                "Filled": "true",
+                "Color": "yellow",
+                "w": "1",
+                "h": "1",
+                "text": "Gabelstapler",
+                "Layer": 1,
+                "text_color": "black",
+            }
 
     elif isinstance(agent, TWare):
         portrayal = {
