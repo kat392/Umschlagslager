@@ -10,15 +10,15 @@ class Tagent_routing_controller():
         self.gabelstapler_list = gabelstapler_list
 
     def find_next_way_point_for_gabelstapler(self, gabelstapler: TGabelstapler):
-        if gabelstapler.beladene_ware is None:
+        if gabelstapler.reservierte_ware_ist_beladen():
+            # Gabelstapler hat Ware geladen/muss seine abliefern
+            gabelstapler.next_way_point = self.warenausgabe.pos
+        else:
             # Gabelstapler hat keine Ware geladen/muss welche besorgen
             if gabelstapler.reservierte_ware is not None:
                 gabelstapler.next_way_point = gabelstapler.reservierte_ware.pos
             else:
                 gabelstapler.next_way_point = (0, 0)
-        else:
-            # Gabelstapler hat Ware geladen/muss seine abliefern
-            gabelstapler.next_way_point = self.warenausgabe.pos
 
 
     def step(self, waren_list: list[TWare]):

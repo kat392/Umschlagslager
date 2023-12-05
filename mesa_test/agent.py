@@ -1,4 +1,5 @@
 from ctypes import pointer
+from pickle import NONE
 from tkinter import Y
 from turtle import pos
 from mesa import Agent
@@ -41,23 +42,25 @@ class TWarenEingang(Agent):
 
 class TGabelstapler(Agent):
     reservierte_ware: TWare
-    beladene_ware: TWare
     next_way_point: pos
 
     def __init__(self, unique_id, model):
         self.reservierte_ware = None
-        self.beladene_ware = None
         self.next_way_point = None
         super().__init__(unique_id, model)
 
+    def reservierte_ware_ist_beladen(self) -> bool:
+        if self.reservierte_ware is not None:
+            return self.pos == self.reservierte_ware.pos
+        else:
+            return False
+
     def entladen(self) -> TWare:
-        ware = self.beladene_ware
-        self.reservierte_ware = None
-        self.beladene_ware = None
-        ware.reservierer = None
-        return ware
-
-
+        if self.reservierte_ware_ist_beladen():
+            ware = self.reservierte_ware
+            self.reservierte_ware = None
+            ware.reservierer = None
+            return ware
 
     def step(self) -> None:
         self.move()
@@ -116,9 +119,9 @@ class TGabelstapler(Agent):
                     # Agent ist Ware die self reserviert hat
                     if isinstance(new_cell_agent, TWare) and new_cell_agent.reservierer == self:
                         # Lade Ware auf
-                        self.beladene_ware = new_cell_agent
+                        continue;
                     elif isinstance(new_cell_agent, TWarenAusgabe):
-                        if self.beladene_ware is not None:
+                        if self.reservierte_ware_ist_beladen():
                             new_cell_agent.ware_aus_system_schaffen(self.entladen())
                     else:
                         new_position_available = False
@@ -130,6 +133,6 @@ class TGabelstapler(Agent):
         else:
             new_position = self.pos
 
+        if self.reservierte_ware_ist_beladen():
+            self.model.grid.move_agent(self.reservierte_ware, new_position)
         self.model.grid.move_agent(self, new_position)
-        if self.beladene_ware is not None:
-            self.model.grid.move_agent(self.beladene_ware, new_position)

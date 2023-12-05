@@ -39,7 +39,7 @@ def agent_portrayal(agent):
         }
         if agent.next_way_point is None or agent.next_way_point is None:
            portrayal["Color"] = "red"
-        elif agent.beladene_ware is not None:
+        elif agent.reservierte_ware_ist_beladen():
             portrayal["Color"] = "green"
         else:
             portrayal["Color"] = "yellow"
@@ -51,7 +51,7 @@ def agent_portrayal(agent):
             "Color": "blue",
             "r": "0.5",
             "text": "War",
-            "Layer": 1,
+            "Layer": 3,
             "text_color": "black",
         }
 
