@@ -2,8 +2,7 @@ from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import NumberInput
 from mesa.visualization.modules import CanvasGrid
 from model import OurModel
-from agent import TWare, TLagerplatz, TGabelstapler
-from zmq import NULL
+from agent import TWare, TLagerplatz, TGabelstapler, TWarenAusgabe
 
 NUMBER_OF_CELLS = 15
 
@@ -29,36 +28,28 @@ def agent_portrayal(agent):
     # if the agent is buried we put it as white, not showing it.
     #if agent.buried:
     if isinstance(agent, TGabelstapler):
-        if agent.next_way_point == NULL:
-           portrayal = {
-               "Shape": "rect",
-               "Filled": "true",
-               "Color": "red",
-               "w": "1",
-               "h": "1",
-               "text": "Gabelstapler",
-               "Layer": 1,
-               "text_color": "black",
-           }
-        else:
-            portrayal = {
-                "Shape": "rect",
-                "Filled": "true",
-                "Color": "yellow",
-                "w": "1",
-                "h": "1",
-                "text": "Gabelstapler",
-                "Layer": 1,
-                "text_color": "black",
-            }
-
-    elif isinstance(agent, TWare):
         portrayal = {
             "Shape": "rect",
             "Filled": "true",
-            "Color": "blue",
             "w": "1",
             "h": "1",
+            "text": "Gabelstapler",
+            "Layer": 1,
+            "text_color": "black",
+        }
+        if agent.next_way_point is None or agent.next_way_point is None:
+           portrayal["Color"] = "red"
+        elif agent.beladene_ware is not None:
+            portrayal["Color"] = "green"
+        else:
+            portrayal["Color"] = "yellow"
+
+    elif isinstance(agent, TWare):
+        portrayal = {
+            "Shape": "circle",
+            "Filled": "true",
+            "Color": "blue",
+            "r": "0.5",
             "text": "War",
             "Layer": 1,
             "text_color": "black",
@@ -75,6 +66,18 @@ def agent_portrayal(agent):
             "Layer": 1,
             "text_color": "black",
         }
+
+    elif isinstance(agent, TWarenAusgabe):
+        portrayal = {
+            "Shape": "rect",
+            "Filled": "true",
+            "Color": "purple",
+            "w": "0.8",
+            "h": "0.8",
+            "text": "Waren Ausgabe",
+            "Layer": 2,
+            "text_color": "black",
+        }    
 
     else:
         portrayal = {
