@@ -82,24 +82,19 @@ class OurModel(Model):
                 "Anzahl der Waren": self.num_agents_ware,
             }
         )        
-        # Create TWare
-        self.waren_list = []
         for i in range(self.agent_index, self.num_agents_ware + self.agent_index):
             self.create_ware()
 
-        #Create TLagerplatz
-        self.lagerplatz_list = []
         for i in range(self.agent_index, self.num_agents_lagerplatz + self.agent_index):
             self.create_lagerplatz()
 
-        #Create TGapelstapler
         for i in range(self.agent_index, self.num_agents_gabelstapler + self.agent_index):
             self.create_gabelstapler()
     
-        for i in range(self.agent_index, 1 + self.agent_index):
+        for i in range(self.agent_index, 2 + self.agent_index):
             self.create_wareneingang()
 
-        for i in range(self.agent_index, 2 + self.agent_index):
+        for i in range(self.agent_index, 1 + self.agent_index):
             self.create_warenausgang()
 
         self.agent_routing_controller = Tagent_routing_controller(self.gabelstapler_list, self.warenausgang_list)
