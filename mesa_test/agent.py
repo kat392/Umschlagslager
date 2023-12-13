@@ -37,8 +37,22 @@ class TWarenAusgabe(Agent):
 
 
 class TWarenEingang(Agent):
-    def __init__(self, unique_id: int, model: Model) -> None:
+    def __init__(self, unique_id: int, model: Model, event_ware_in_system_schaffen, steps_to_waren_creation: int) -> None:
         super().__init__(unique_id, model)
+        self.event_ware_in_system_schaffen = event_ware_in_system_schaffen
+        self.steps_to_waren_creation = steps_to_waren_creation
+        self.steps_to_waren_creation_counter = 0
+
+    def ware_in_system_schaffen(self):
+        x_pos, y_pos = self.pos
+        self.event_ware_in_system_schaffen(x_pos, y_pos)
+
+    def step(self) -> None:
+        if self.steps_to_waren_creation_counter == self.steps_to_waren_creation:
+            self.ware_in_system_schaffen()
+            self.steps_to_waren_creation_counter = 0
+        else:
+            self.steps_to_waren_creation_counter = self.steps_to_waren_creation_counter + 1
 
 class TGabelstapler(Agent):
     reservierte_ware: TWare
@@ -111,6 +125,11 @@ class TGabelstapler(Agent):
                 # besorge Liste der Agenten auf dem Feld
                 new_cell_agents = self.model.grid.get_cell_list_contents([cell])
                 # Mehr als ein Agent auf dem Feld
+                #for new_cell_agent in new_cell_agents:
+                #    if isinstance(new_cell_agent, TWare) and new_cell_agent.reservierer == self:
+                #    
+                #    elif isinstance(new_cell_agent, TWarenEingang) or isinstance(new_cell_agent, TWarenAusgabe):
+
                 if len(new_cell_agents) > 1:
                     new_position_available = False
                 # Genau ein Agent auf dem Feld

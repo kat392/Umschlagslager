@@ -13,6 +13,27 @@ class OurModel(Model):
         self.waren_list.remove(agent)
         agent = None
 
+    def create_agent(self, agent, x_pos = -1, y_pos = -1):
+        self.schedule.add(agent)
+
+        if x_pos < 0:
+            x_pos = self.random.randrange(self.grid.width)
+        if y_pos < 0:
+            y_pos = self.random.randrange(self.grid.height)
+
+        self.grid.place_agent(agent, (x_pos, y_pos))
+        self.agent_index = self.agent_index + 1
+
+    def create_ware(self, x_pos = -1, y_pos = -1):
+        agent = TWare(self.agent_index, self)
+        self.create_agent(agent, x_pos, y_pos)
+        self.waren_list.append(agent)
+        
+    def create_lagerplatz(self, x_pos = -1, y_pos = -1):
+        agent = TLagerplatz(self.agent_index, self)
+        self.create_agent(agent, x_pos, y_pos)
+        self.lagerplatz_list.append(agent)
+        
 
     def __init__(self, number_agents_gabelstapler, number_agents_lagerplatz, number_agents_ware, width, height):
         self.agent_routing_controller: Tagent_routing_controller
@@ -24,6 +45,8 @@ class OurModel(Model):
         self.num_agents_gabelstapler = number_agents_gabelstapler
         self.num_agents_lagerplatz = number_agents_lagerplatz
         self.num_agents_ware = number_agents_ware
+
+        self.agent_index = 0
         
         self.grid = MultiGrid(width, height, False)
         self.schedule = RandomActivation(self)
@@ -35,28 +58,16 @@ class OurModel(Model):
                 "Anzahl der Lagerplätze": self.num_agents_lagerplatz,
                 "Anzahl der Waren": self.num_agents_ware,
             }
-        )
-
-        # Create agents
-        agent_index = 0
-        
+        )        
         # Create TWare
         self.waren_list = []
-        for i in range(agent_index, self.num_agents_ware + agent_index):
-            a = TWare(agent_index, self)
-            self.schedule.add(a)
-            self.waren_list.append(a)
-
-            # Add the agent to a random grid
-            x = self.random.randrange(self.grid.width)
-            y = self.random.randrange(self.grid.height)
-            self.grid.place_agent(a, (x, y))
-            agent_index= agent_index + 1
+        for i in range(self.agent_index, self.num_agents_ware + self.agent_index):
+            self.create_ware()
 
         #Create TLagerplatz
         self.lagerplatz_list = []
-        for i in range(agent_index, self.num_agents_lagerplatz + agent_index):
-            a = TLagerplatz(agent_index, self)
+        for i in range(self.agent_index, self.num_agents_lagerplatz + self.agent_index):
+            a = TLagerplatz(self.agent_index, self)
             self.schedule.add(a)
             self.lagerplatz_list.append(a)
 
@@ -64,12 +75,12 @@ class OurModel(Model):
             x = 3 + i
             y = 10
             self.grid.place_agent(a, (x, y))
-            agent_index= agent_index + 1
+            self.agent_index= self.agent_index + 1
 
         gabelstapler_list = []
         #Create TGapelstapler
-        for i in range(agent_index, self.num_agents_gabelstapler + agent_index):
-            a = TGabelstapler(agent_index, self)
+        for i in range(self.agent_index, self.num_agents_gabelstapler + self.agent_index):
+            a = TGabelstapler(self.agent_index, self)
             self.schedule.add(a)
             gabelstapler_list.append(a)
 
@@ -77,16 +88,25 @@ class OurModel(Model):
             x = self.random.randrange(self.grid.width)
             y = self.random.randrange(self.grid.height)
             self.grid.place_agent(a, (x, y))
-            agent_index= agent_index + 1
+            self.agent_index= self.agent_index + 1
 
-        event_ware_aus_system_schaffen = self.remove_agent
-        a = TWarenAusgabe(agent_index, self, event_ware_aus_system_schaffen)
+        event_ware_in_system_schaffen = self.create_ware
+        a = TWarenEingang(self.agent_index, self, event_ware_in_system_schaffen, 5)
         self.schedule.add(a)
         # Add the agent to a random grid cell
         x = self.random.randrange(self.grid.width)
         y = self.random.randrange(self.grid.height)
         self.grid.place_agent(a, (x, y))
-        agent_index= agent_index + 1
+        self.agent_index= self.agent_index + 1
+
+        event_ware_aus_system_schaffen = self.remove_agent
+        a = TWarenAusgabe(self.agent_index, self, event_ware_aus_system_schaffen)
+        self.schedule.add(a)
+        # Add the agent to a random grid cell
+        x = self.random.randrange(self.grid.width)
+        y = self.random.randrange(self.grid.height)
+        self.grid.place_agent(a, (x, y))
+        self.agent_index= self.agent_index + 1
 
         self.agent_routing_controller = Tagent_routing_controller(gabelstapler_list, a)
 
@@ -94,4 +114,3 @@ class OurModel(Model):
         """Advance the model by one step."""
         self.agent_routing_controller.step(self.waren_list)
         self.schedule.step()
-
