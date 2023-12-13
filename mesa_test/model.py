@@ -25,9 +25,10 @@ class OurModel(Model):
         self.agent_index = self.agent_index + 1
 
     def create_ware(self, x_pos = -1, y_pos = -1):
-        agent = TWare(self.agent_index, self)
-        self.create_agent(agent, x_pos, y_pos)
-        self.waren_list.append(agent)
+        if self.grid.is_cell_empty((x_pos, y_pos)):
+            agent = TWare(self.agent_index, self)
+            self.create_agent(agent, x_pos, y_pos)
+            self.waren_list.append(agent)
         
     def create_lagerplatz(self, x_pos = -1, y_pos = -1):
         agent = TLagerplatz(self.agent_index, self)

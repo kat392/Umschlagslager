@@ -2,7 +2,7 @@ from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import NumberInput
 from mesa.visualization.modules import CanvasGrid
 from model import OurModel
-from agent import TWare, TLagerplatz, TGabelstapler, TWarenAusgabe
+from agent import TWare, TLagerplatz, TGabelstapler, TWarenAusgabe, TWarenEingang
 
 NUMBER_OF_CELLS = 15
 
@@ -76,8 +76,19 @@ def agent_portrayal(agent):
             "h": "0.8",
             "text": "Waren Ausgabe",
             "Layer": 2,
-            "text_color": "black",
-        }    
+            "text_color": "white",
+        }
+    elif isinstance(agent, TWarenEingang):
+        portrayal = {
+            "Shape": "rect",
+            "Filled": "true",
+            "Color": "purple",
+            "w": "0.8",
+            "h": "0.8",
+            "text": "Waren Eingang",
+            "Layer": 2,
+            "text_color": "white",
+        }
 
     else:
         portrayal = {
