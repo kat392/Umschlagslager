@@ -45,7 +45,7 @@ class TWarenEingang(Agent):
 
     def ware_in_system_schaffen(self):
         x_pos, y_pos = self.pos
-        self.event_ware_in_system_schaffen(x_pos, y_pos)
+        self.event_ware_in_system_schaffen(x_pos, y_pos+1)
 
     def step(self) -> None:
         if self.steps_to_waren_creation_counter == self.steps_to_waren_creation:
