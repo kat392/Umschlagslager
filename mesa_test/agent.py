@@ -37,15 +37,19 @@ class TWarenAusgabe(Agent):
 
 
 class TWarenEingang(Agent):
-    def __init__(self, unique_id: int, model: Model, event_ware_in_system_schaffen, steps_to_waren_creation: int) -> None:
+    def __init__(self, unique_id: int, model: Model, event_ware_in_system_schaffen, 
+                 steps_to_waren_creation: int) -> None:
         super().__init__(unique_id, model)
         self.event_ware_in_system_schaffen = event_ware_in_system_schaffen
         self.steps_to_waren_creation = steps_to_waren_creation
         self.steps_to_waren_creation_counter = 0
 
     def ware_in_system_schaffen(self):
-        x_pos, y_pos = self.pos
-        self.event_ware_in_system_schaffen(x_pos, y_pos+1)
+        available_cells = self.model.grid.get_neighborhood(
+            self.pos, moore=True, include_center=False
+        )
+        x_pos, y_pos = self.random.choice(available_cells)
+        self.event_ware_in_system_schaffen(x_pos, y_pos)
 
     def step(self) -> None:
         if self.steps_to_waren_creation_counter == self.steps_to_waren_creation:
