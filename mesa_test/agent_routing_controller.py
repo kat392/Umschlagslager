@@ -5,14 +5,14 @@ from agent import TWare, TLagerplatz, TGabelstapler, TWarenAusgabe
 class Tagent_routing_controller():
     gabelstapler_list: list[TGabelstapler]
 
-    def __init__(self, gabelstapler_list: list[TGabelstapler], warenausgabe: TWarenAusgabe) -> None:
-        self.warenausgabe = warenausgabe
+    def __init__(self, gabelstapler_list: list[TGabelstapler], warenausgang_list: list[TWarenAusgabe]) -> None:
+        self.warenausgang_list = warenausgang_list
         self.gabelstapler_list = gabelstapler_list
 
     def find_next_way_point_for_gabelstapler(self, gabelstapler: TGabelstapler):
         if gabelstapler.reservierte_ware_ist_beladen():
             # Gabelstapler hat Ware geladen/muss seine abliefern
-            gabelstapler.next_way_point = self.warenausgabe.pos
+            gabelstapler.next_way_point = self.warenausgang_list[0].pos
         else:
             # Gabelstapler hat keine Ware geladen/muss welche besorgen
             if gabelstapler.reservierte_ware is not None:
