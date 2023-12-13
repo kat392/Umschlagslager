@@ -34,7 +34,21 @@ class OurModel(Model):
         agent = TLagerplatz(self.agent_index, self)
         self.create_agent(agent, x_pos, y_pos)
         self.lagerplatz_list.append(agent)
-        
+
+    def create_gabelstapler(self, x_pos = -1, y_pos = -1):
+        agent = TGabelstapler(self.agent_index, self)
+        self.create_agent(agent, x_pos, y_pos)
+        self.gabelstapler_list.append(agent)  
+
+    def create_wareneingang(self, x_pos = -1, y_pos = -1): 
+        agent = TWarenEingang(self.agent_index, self, self.create_ware, 5)
+        self.create_agent(agent, x_pos, y_pos)
+        self.wareneingang_list.append(agent)
+
+    def create_warenausgang(self, x_pos = -1, y_pos = -1): 
+        agent = TWarenAusgabe(self.agent_index, self, self.remove_agent)
+        self.create_agent(agent, x_pos, y_pos)
+        self.warenausgang_list.append(agent)
 
     def __init__(self, number_agents_gabelstapler, number_agents_lagerplatz, number_agents_ware, width, height):
         self.agent_routing_controller: Tagent_routing_controller
@@ -42,6 +56,14 @@ class OurModel(Model):
         self.gabelstapler_list: list[TGabelstapler]
         self.lagerplatz_list: list[TLagerplatz]
         self.waren_list: list[TWare]
+        self.wareneingang_list: list[TWarenEingang]
+        self.warenausgang_list: list[TWarenAusgabe]
+
+        self.gabelstapler_list = []
+        self.lagerplatz_list = []
+        self.waren_list = []
+        self.wareneingang_list = []
+        self.warenausgang_list = []
 
         self.num_agents_gabelstapler = number_agents_gabelstapler
         self.num_agents_lagerplatz = number_agents_lagerplatz
@@ -60,56 +82,22 @@ class OurModel(Model):
                 "Anzahl der Waren": self.num_agents_ware,
             }
         )        
-        # Create TWare
-        self.waren_list = []
         for i in range(self.agent_index, self.num_agents_ware + self.agent_index):
             self.create_ware()
 
-        #Create TLagerplatz
-        self.lagerplatz_list = []
         for i in range(self.agent_index, self.num_agents_lagerplatz + self.agent_index):
-            a = TLagerplatz(self.agent_index, self)
-            self.schedule.add(a)
-            self.lagerplatz_list.append(a)
+            self.create_lagerplatz()
 
-            # Add the agent to a random grid
-            x = 3 + i
-            y = 10
-            self.grid.place_agent(a, (x, y))
-            self.agent_index= self.agent_index + 1
-
-        gabelstapler_list = []
-        #Create TGapelstapler
         for i in range(self.agent_index, self.num_agents_gabelstapler + self.agent_index):
-            a = TGabelstapler(self.agent_index, self)
-            self.schedule.add(a)
-            gabelstapler_list.append(a)
+            self.create_gabelstapler()
+    
+        for i in range(self.agent_index, 2 + self.agent_index):
+            self.create_wareneingang()
 
-            # Add the agent to a random grid cell
-            x = self.random.randrange(self.grid.width)
-            y = self.random.randrange(self.grid.height)
-            self.grid.place_agent(a, (x, y))
-            self.agent_index= self.agent_index + 1
+        for i in range(self.agent_index, 1 + self.agent_index):
+            self.create_warenausgang()
 
-        event_ware_in_system_schaffen = self.create_ware
-        a = TWarenEingang(self.agent_index, self, event_ware_in_system_schaffen, 5)
-        self.schedule.add(a)
-        # Add the agent to a random grid cell
-        x = self.random.randrange(self.grid.width)
-        y = self.random.randrange(self.grid.height)
-        self.grid.place_agent(a, (x, y))
-        self.agent_index= self.agent_index + 1
-
-        event_ware_aus_system_schaffen = self.remove_agent
-        a = TWarenAusgabe(self.agent_index, self, event_ware_aus_system_schaffen)
-        self.schedule.add(a)
-        # Add the agent to a random grid cell
-        x = self.random.randrange(self.grid.width)
-        y = self.random.randrange(self.grid.height)
-        self.grid.place_agent(a, (x, y))
-        self.agent_index= self.agent_index + 1
-
-        self.agent_routing_controller = Tagent_routing_controller(gabelstapler_list, a)
+        self.agent_routing_controller = Tagent_routing_controller(self.gabelstapler_list, self.warenausgang_list)
 
     def step(self):
         """Advance the model by one step."""
