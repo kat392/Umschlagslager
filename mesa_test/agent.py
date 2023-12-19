@@ -1,6 +1,3 @@
-from ctypes import pointer
-from pickle import NONE
-from tkinter import Y
 from turtle import pos
 from mesa import Agent
 from mesa.model import Model
