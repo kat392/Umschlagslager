@@ -82,16 +82,13 @@ class OurModel(Model):
             }
         )        
         for i in range(self.agent_index, self.num_agents_ware + self.agent_index):
-            self.create_ware()
+            self.create_wareneingang()
 
         for i in range(self.agent_index, self.num_agents_lagerplatz + self.agent_index):
             self.create_lagerplatz()
 
         for i in range(self.agent_index, self.num_agents_gabelstapler + self.agent_index):
             self.create_gabelstapler()
-    
-        for i in range(self.agent_index, 2 + self.agent_index):
-            self.create_wareneingang()
 
         for i in range(self.agent_index, 1 + self.agent_index):
             self.create_warenausgang()

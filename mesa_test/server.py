@@ -17,7 +17,7 @@ simulation_params = {
     "Anzahl der Lagerplätze", value=0
     ),
     "number_agents_ware": NumberInput(
-    "Anzahl der Waren", value=3
+    "Anzahl der Warenausgaben", value=1
     ),
     "width": NUMBER_OF_CELLS,
     "height": NUMBER_OF_CELLS,
