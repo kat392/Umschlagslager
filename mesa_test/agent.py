@@ -87,7 +87,6 @@ class TGabelstapler(Agent):
         )
 
         cells_with_agents = []
-        # looking for agents in the cells around the agent
         for cell in available_cells:
             other_agents = self.model.grid.get_cell_list_contents([cell])
             if len(other_agents) > 0:
@@ -96,51 +95,25 @@ class TGabelstapler(Agent):
 
         # if there is some agent on the neighborhood
         #if len(cells_with_agents) == 0:
-        if self.next_way_point is not None:           
-            next_way_point_x, next_way_point_y = self.next_way_point
-            current_x, current_y = self.pos
+        if self.next_way_point is not None:
+            new_position = self.get_new_position()
 
-            if next_way_point_x > current_x:
-                new_x = current_x + 1
-            elif next_way_point_x < current_x:
-                new_x = current_x - 1
-            else:
-                new_x = current_x
-
-            if next_way_point_y > current_y:
-                new_y = current_y + 1
-            elif next_way_point_y < current_y:
-                new_y = current_y - 1
-            else:
-                new_y = current_y
-
-            new_position = new_x, new_y
-
-            # besorge Zelle der neuen Position
-            new_cell = self.model.grid.get_neighborhood(
+            new_cells = self.model.grid.get_neighborhood(
                 new_position, moore=False, include_center=True, radius=0
             )
 
             new_position_available = True
-            for cell in new_cell:
+            for cell in new_cells:
                 # besorge Liste der Agenten auf dem Feld
                 new_cell_agents = self.model.grid.get_cell_list_contents([cell])
-                # Mehr als ein Agent auf dem Feld
-                #for new_cell_agent in new_cell_agents:
-                #    if isinstance(new_cell_agent, TWare) and new_cell_agent.reservierer == self:
-                #    
-                #    elif isinstance(new_cell_agent, TWarenEingang) or isinstance(new_cell_agent, TWarenAusgabe):
 
                 if len(new_cell_agents) > 1:
                     new_position_available = False
-                # Genau ein Agent auf dem Feld
-                elif len(new_cell_agents) > 0:
+                elif len(new_cell_agents) == 1:
                     new_cell_agent = new_cell_agents[0]
-                    # Agent ist Ware die self reserviert hat
                     if isinstance(new_cell_agent, TWare) and new_cell_agent.reservierer == self:
-                        # Lade Ware auf
-                        continue
-                    elif isinstance(new_cell_agent, TWarenAusgabe):
+                        new_position_available = True
+                    if isinstance(new_cell_agent, TWarenAusgabe):
                         if self.reservierte_ware_ist_beladen():
                             new_cell_agent.ware_aus_system_schaffen(self.entladen())
                     else:
@@ -156,3 +129,24 @@ class TGabelstapler(Agent):
         if self.reservierte_ware_ist_beladen():
             self.model.grid.move_agent(self.reservierte_ware, new_position)
         self.model.grid.move_agent(self, new_position)
+
+    def get_new_position(self):
+        next_way_point_x, next_way_point_y = self.next_way_point
+        current_x, current_y = self.pos
+
+        if next_way_point_x > current_x:
+            new_x = current_x + 1
+        elif next_way_point_x < current_x:
+            new_x = current_x - 1
+        else:
+            new_x = current_x
+
+        if next_way_point_y > current_y:
+            new_y = current_y + 1
+        elif next_way_point_y < current_y:
+            new_y = current_y - 1
+        else:
+            new_y = current_y
+
+        new_position = new_x, new_y
+        return new_position
