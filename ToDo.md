@@ -6,6 +6,9 @@
 
 ## Todoliste
 
-- Kristof: Wareneingang
-- Katrin: Routing
-- Justin: Lagerplatz
+- Kristof: Wareneingang - Fertig
+- Katrin: Routing - In Arbeit
+- Justin: Lagerplatz - In Arbeit
+
+- Lagerplätze haben eine Kapazität
+- Ware hat eine Zustellpriorität
