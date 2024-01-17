@@ -80,7 +80,7 @@ class OurModel(Model):
                 "Anzahl der Lagerplätze": self.num_agents_lagerplatz,
                 "Anzahl der Waren": self.num_agents_ware,
             }
-        )        
+        )
         for i in range(self.agent_index, self.num_agents_ware + self.agent_index):
             self.create_wareneingang()
 

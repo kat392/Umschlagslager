@@ -96,7 +96,7 @@ class TGabelstapler(Agent):
 
         # if there is some agent on the neighborhood
         #if len(cells_with_agents) == 0:
-        if self.next_way_point is not None:
+        if self.next_way_point is not None:           
             next_way_point_x, next_way_point_y = self.next_way_point
             current_x, current_y = self.pos
 
@@ -139,14 +139,14 @@ class TGabelstapler(Agent):
                     # Agent ist Ware die self reserviert hat
                     if isinstance(new_cell_agent, TWare) and new_cell_agent.reservierer == self:
                         # Lade Ware auf
-                        continue;
+                        continue
                     elif isinstance(new_cell_agent, TWarenAusgabe):
                         if self.reservierte_ware_ist_beladen():
                             new_cell_agent.ware_aus_system_schaffen(self.entladen())
                     else:
                         new_position_available = False
 
-            if not(new_position_available):
+            if not new_position_available:
                 new_position = self.pos
             if new_position == self.next_way_point:
                 self.next_way_point = None
