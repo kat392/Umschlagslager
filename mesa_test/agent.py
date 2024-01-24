@@ -82,19 +82,7 @@ class TGabelstapler(Agent):
         # TODO Move in verschiedene Methoden aufteilten. Waren beladung Waren entladung
 
     def move(self) -> None:
-        available_cells = self.model.grid.get_neighborhood(
-            self.pos, moore=True, include_center=False
-        )
-
-        cells_with_agents = []
-        for cell in available_cells:
-            other_agents = self.model.grid.get_cell_list_contents([cell])
-            if len(other_agents) > 0:
-                for agent in other_agents:
-                    cells_with_agents.append(agent)
-
-        # if there is some agent on the neighborhood
-        #if len(cells_with_agents) == 0:
+        new_position = self.pos
         if self.next_way_point is not None:
             new_position = self.get_new_position()
 
@@ -102,29 +90,20 @@ class TGabelstapler(Agent):
                 new_position, moore=False, include_center=True, radius=0
             )
 
-            new_position_available = True
             for cell in new_cells:
-                # besorge Liste der Agenten auf dem Feld
                 new_cell_agents = self.model.grid.get_cell_list_contents([cell])
 
-                if len(new_cell_agents) > 1:
-                    new_position_available = False
-                elif len(new_cell_agents) == 1:
+                if len(new_cell_agents) == 1:
                     new_cell_agent = new_cell_agents[0]
                     if isinstance(new_cell_agent, TWare) and new_cell_agent.reservierer == self:
-                        new_position_available = True
-                    if isinstance(new_cell_agent, TWarenAusgabe):
-                        if self.reservierte_ware_ist_beladen():
-                            new_cell_agent.ware_aus_system_schaffen(self.entladen())
+                        continue
+                    elif isinstance(new_cell_agent, TWarenAusgabe) and self.reservierte_ware_ist_beladen():
+                        new_cell_agent.ware_aus_system_schaffen(self.entladen())
                     else:
-                        new_position_available = False
+                        new_position = self.pos # Stehen bleiben wegen Kollision
 
-            if not new_position_available:
-                new_position = self.pos
             if new_position == self.next_way_point:
                 self.next_way_point = None
-        else:
-            new_position = self.pos
 
         if self.reservierte_ware_ist_beladen():
             self.model.grid.move_agent(self.reservierte_ware, new_position)
