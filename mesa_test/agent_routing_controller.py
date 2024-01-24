@@ -19,6 +19,8 @@ class Tagent_routing_controller():
                 gabelstapler.next_way_point = gabelstapler.reservierte_ware.pos
             else:
                 gabelstapler.next_way_point = (0, 0)
+                # gabelstapler.next_way_point = gabelstapler.pos
+                # ToDo: Stehen bleiben funktioniert erst, wenn dann kain Warenausgang mehr blockiert wird.
 
 
     def step(self, waren_list: list[TWare]):
@@ -34,7 +36,7 @@ class Tagent_routing_controller():
             if gabelstapler.reservierte_ware is None and len(unreservierte_waren) > 0:
                 ware = unreservierte_waren[0]
                 gabelstapler.reservierte_ware = ware
-                ware. reservierer = gabelstapler
+                ware.reservierer = gabelstapler
                 unreservierte_waren.remove(ware)
 
             self.find_next_way_point_for_gabelstapler(gabelstapler)
