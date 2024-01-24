@@ -12,3 +12,5 @@
 
 - Lagerplätze haben eine Kapazität
 - Ware hat eine Zustellpriorität
+
+- Kristof: Kollisionsverhinderung
